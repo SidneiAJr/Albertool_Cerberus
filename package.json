@@ -53,13 +53,13 @@
       }
     ],
     "menus": {
-      "view/title": [
+          "view/title": [
         {
-          "command": "cerberus.refresh",
-          "when": "view == cerberus-routes || view == cerberus-server || view == cerberus-logs",
-          "group": "navigation"
+            "command": "cerberus.refresh",
+            "when": "view == cerberus-routes",  
+            "group": "navigation"
         }
-      ]
+    ]
     },
     "keybindings": [
       {
@@ -97,8 +97,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/seu-usuario/albertool-cerberus"
+    "url": "https://github.com/SidneiAJr/Albertool_Cerberus"
   },
-  "publisher": "seu-nome",
+  "publisher": "SidAlbertaodasmassa",
   "license": "MIT"
 }
