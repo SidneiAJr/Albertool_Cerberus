@@ -3,8 +3,6 @@ import * as vscode from 'vscode'
 import { ServerMonitor } from './ServerMonitor'
 import { RouteParser } from './RouteParser'
 import { CerberusProvider } from './SidebarProvider'
-import { CerberusStatusProvider } from './CerberusStatusProvider'
-import { CerberusLogsProvider } from './CerberusLogsProvider'
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('🐺 Albertool Cerberus ativado!')
@@ -12,30 +10,26 @@ export function activate(context: vscode.ExtensionContext) {
     const monitor = new ServerMonitor(3000)
     const parser = new RouteParser()
 
-    // Cria os providers
-    const providers = [
-        new CerberusProvider(monitor, parser),
-        new CerberusStatusProvider(monitor),
-        new CerberusLogsProvider()
-    ]
+    // ============================================
+    // 📋 PROVIDER ÚNICO (JÁ MOSTRA STATUS + LOGS + ROTAS)
+    // ============================================
+    const provider = new CerberusProvider(monitor, parser)
+    vscode.window.registerTreeDataProvider('cerberus-routes', provider)
 
-    // Registra os providers
-    const viewIds = ['cerberus-routes', 'cerberus-server', 'cerberus-logs']
-    providers.forEach((provider, index) => {
-        vscode.window.registerTreeDataProvider(viewIds[index], provider)
+    // ============================================
+    // 🔄 COMANDO DE REFRESH
+    // ============================================
+    const refreshCmd = vscode.commands.registerCommand('cerberus.refresh', () => {
+        provider.refresh()
     })
 
-    // Função de refresh
-    const refreshAll = () => providers.forEach(p => p.refresh())
-
-    // Registra comando
-    const refreshCmd = vscode.commands.registerCommand('cerberus.refresh', refreshAll)
-
-    // Auto refresh
-    const interval = setInterval(refreshAll, 5000)
+    // Auto refresh a cada 5 segundos
+    const interval = setInterval(() => {
+        provider.refresh()
+    }, 5000)
 
     // Refresh inicial
-    refreshAll()
+    provider.refresh()
 
     context.subscriptions.push(refreshCmd, {
         dispose: () => clearInterval(interval)
