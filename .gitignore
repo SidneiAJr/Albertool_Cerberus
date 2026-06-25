@@ -1,0 +1,65 @@
+# Compiled output
+out/
+dist/
+*.vsix
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode-test/
+.vscode/.react
+*.swp
+*.swo
+*~
+.idea/
+*.iml
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.pem
+*.crt
+*.key
+
+# Yeoman / Generator
+.yo-rc.json
+
+# VSCode Extension specific
+*.vsix
+.vscode/launch.json
+.vscode/tasks.json
+
+# Build outputs
+*.d.ts
+*.js
+*.js.map
+!src/**/*.d.ts
+!src/**/*.js  # se você usa JS, mantenha
+
+# Package lock (escolha um, recomendo deixar package-lock.json versionado)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

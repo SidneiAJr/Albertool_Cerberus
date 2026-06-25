@@ -9,7 +9,6 @@ export interface Route {
 }
 
 export class RouteParser {
-
     async parseRoutes(): Promise<Route[]> {
         const routes: Route[] = []
         const workspaceFolders = vscode.workspace.workspaceFolders
@@ -28,28 +27,60 @@ export class RouteParser {
 
     private async findRouteFiles(root: string): Promise<string[]> {
         const files: string[] = []
-        const dirsToSearch = ['routes', 'routers', 'src/routes', 'src/routers', 'Backend/routes', 'Backend/routers']
+        
+        // Escaneia o projeto inteiro recursivamente
+        this.scanDir(root, files, 0)
+        
+        return files
+    }
 
-        for (const dir of dirsToSearch) {
-            const fullPath = path.join(root, dir)
-            if (fs.existsSync(fullPath)) {
-                const found = fs.readdirSync(fullPath)
-                    .filter(f => f.endsWith('.ts') || f.endsWith('.js'))
-                    .map(f => path.join(fullPath, f))
-                files.push(...found)
-            }
+    private scanDir(dir: string, files: string[], depth: number): void {
+        // Limita profundidade pra não travar em projetos grandes
+        if (depth > 6) return
+
+        // Ignora essas pastas
+        const ignoredDirs = ['node_modules', '.git', 'out', 'dist', 'build', '.vscode', 'coverage']
+
+        let entries: fs.Dirent[]
+        try {
+            entries = fs.readdirSync(dir, { withFileTypes: true })
+        } catch {
+            return
         }
 
-        return files
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name)
+
+            if (entry.isDirectory()) {
+                if (ignoredDirs.includes(entry.name)) continue
+                this.scanDir(fullPath, files, depth + 1)
+            } else if (entry.isFile()) {
+                // Pega qualquer arquivo .ts ou .js que tenha "rout" no nome
+                const name = entry.name.toLowerCase()
+                if (
+                    (name.endsWith('.ts') || name.endsWith('.js')) &&
+                    (name.includes('rout') || name.includes('router'))
+                ) {
+                    files.push(fullPath)
+                }
+            }
+        }
     }
 
     private extractRoutes(filePath: string): Route[] {
         const routes: Route[] = []
-        const content = fs.readFileSync(filePath, 'utf-8')
+        
+        let content: string
+        try {
+            content = fs.readFileSync(filePath, 'utf-8')
+        } catch {
+            return routes
+        }
+
         const fileName = path.basename(filePath)
 
-        // Regex pra pegar router.get('/rota'), app.post('/rota') etc
-        const regex = /(?:router|app)\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/gi
+        // Pega router.get, app.post, riorouters.delete etc
+        const regex = /(?:\w+)\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/gi
         let match
 
         while ((match = regex.exec(content)) !== null) {

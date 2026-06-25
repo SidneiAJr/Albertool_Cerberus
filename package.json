@@ -1,70 +1,84 @@
 {
   "name": "albertool-cerberus",
   "displayName": "Albertool Cerberus",
-  "description": "",
+  "description": "🐺 Monitor de servidor e rotas para projetos Node.js",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Debuggers",
+    "Linters"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
-        "activitybar": [
-            {
-                "id": "cerberus-sidebar",
-                "title": "Cerberus",
-                "icon": "$(server)"
-            }
-        ]
+      "activitybar": [
+        {
+          "id": "cerberus-sidebar",
+          "title": "🐺 Cerberus",
+          "icon": "$(server)"
+        }
+      ]
     },
     "views": {
-        "cerberus-sidebar": [
-            {
-                "id": "cerberus-server",
-                "name": "🐺 Server Monitor"
-            },
-            {
-                "id": "cerberus-routes",
-                "name": "📡 Rotas"
-            }
-        ]
+      "cerberus-sidebar": [
+         {
+            "id": "cerberus-routes",
+            "name": "🐺 Cerberus — Dashboard"
+        }
+      ]
     },
     "commands": [
-    {
+      {
         "command": "cerberus.refresh",
-        "title": "Cerberus: Atualizar",
+        "title": "🔄 Atualizar",
         "icon": "$(refresh)"
-    },
-    {
+      },
+      {
         "command": "cerberus.setPort",
-        "title": "Cerberus: Mudar Porta"
-    },
-    {
+        "title": "🔧 Mudar Porta"
+      },
+      {
         "command": "cerberus.copyRoute",
-        "title": "Cerberus: Copiar Rota"
-    }
-],
+        "title": "📋 Copiar Rota"
+      },
+      {
+        "command": "cerberus.scanPorts",
+        "title": "🔍 Escanear Portas"
+      }
+    ],
     "menus": {
-        "view/title": [
-            {
-                "command": "cerberus.refresh",
-                "when": "view == cerberus-routes",
-                "group": "navigation"
-            }
-        ]
-    }
-},
+      "view/title": [
+        {
+          "command": "cerberus.refresh",
+          "when": "view == cerberus-routes || view == cerberus-server || view == cerberus-logs",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "cerberus.refresh",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build": "npm run compile",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
@@ -75,9 +89,16 @@
     "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.3",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1"
+    "typescript-eslint": "^8.56.1",
+    "@vscode/vsce": "^2.22.0"
   },
   "dependencies": {
     "axios": "^1.18.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/albertool-cerberus"
+  },
+  "publisher": "seu-nome",
+  "license": "MIT"
 }
